@@ -1,3 +1,4 @@
+
 const products = [
   { id: 1, name: "Product 1", price: 10 },
   { id: 2, name: "Product 2", price: 20 },
@@ -7,7 +8,6 @@ const products = [
 ];
 
 let cartProducts = JSON.parse(sessionStorage.getItem("cart")) || [];
-
 
 const productList = document.getElementById("product-list");
 const cartList = document.getElementById("cart-list");
@@ -37,17 +37,20 @@ function renderCart() {
 
 function addToCart(productId) {
   let product = products.find((p) => p.id === productId);
-  if (!cartProducts.some((item) => item.id === product.id)) {
-    cartProducts.push(product);
-    renderCart();
-  }
+  cartProducts.push(product);
+  renderCart();
   sessionStorage.setItem("cart", JSON.stringify(cartProducts));
 }
 
 function removeFromCart(productId) {
-  cartProducts = cartProducts.filter((product) => product.id !== productId);
-  renderCart();
+  const index = cartProducts.findIndex(p => p.id === productId);
+
+  if (index !== -1) {
+    cartProducts.splice(index, 1); 
+  }
+
   sessionStorage.setItem("cart", JSON.stringify(cartProducts));
+  renderCart();
 }
 
 function clearCart() {
