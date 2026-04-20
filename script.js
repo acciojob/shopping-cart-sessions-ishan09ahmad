@@ -1,4 +1,4 @@
-let products = [
+const products = [
   { id: 1, name: "Product 1", price: 10 },
   { id: 2, name: "Product 2", price: 20 },
   { id: 3, name: "Product 3", price: 30 },
@@ -6,14 +6,15 @@ let products = [
   { id: 5, name: "Product 5", price: 50 },
 ];
 
-let cartProducts = [];
+let cartProducts = JSON.parse(sessionStorage.getItem("cart")) || [];
+
 
 const productList = document.getElementById("product-list");
 const cartList = document.getElementById("cart-list");
 const clearButton = document.querySelector("#clear-cart-btn");
 
 function renderProducts() {
-  productList.innerHTML = "";
+  products.innerHTML = "";
   products.forEach((product) => {
     const li = document.createElement("li");
     li.innerHTML = `${product.name} - $${product.price}  <button class="add-to-cart-btn" data-id="${product.id}" onclick="
@@ -25,7 +26,6 @@ function renderProducts() {
 
 function renderCart() {
   cartList.innerHTML = "";
-
   cartProducts.forEach((product) => {
     const li = document.createElement("li");
     li.innerHTML = `${product.name} - $${product.price}  <button class="add-to-cart-btn" data-id="${product.id}" onclick="
@@ -37,21 +37,23 @@ function renderCart() {
 
 function addToCart(productId) {
   let product = products.find((p) => p.id === productId);
-  products = products.filter((product) => product.id !== productId);
-
-  cartProducts.push(product);
-  renderProducts();
-  renderCart();
+  if (!cartProducts.some((item) => item.id === product.id)) {
+    cartProducts.push(product);
+    renderCart();
+  }
+  sessionStorage.setItem("cart", JSON.stringify(cartProducts));
 }
 
 function removeFromCart(productId) {
   cartProducts = cartProducts.filter((product) => product.id !== productId);
   renderCart();
+  sessionStorage.setItem("cart", JSON.stringify(cartProducts));
 }
 
 function clearCart() {
   cartProducts = cartProducts.filter((product) => false);
   renderCart();
+  sessionStorage.setItem("cart", JSON.stringify(cartProducts));
 }
 
 renderProducts();
